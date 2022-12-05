@@ -4,18 +4,18 @@ library(glue)
 style_choices <- c("none", "dotted", "dashed", "solid", "double")
 
 ui <- fluidPage(theme = "theme.css",
-                titlePanel("Button Styler"),
+                titlePanel("Hospital Admission Simulation"),
                 
                 sidebarLayout(
                   sidebarPanel(
-                    helpText("Style your buttons!"),
-                    
+                    # helpText("Style your buttons!"),
+                    # 
                     # Label
                     textInput("label", "Select text form button", "Label"),
-                    
-                    # Text size
-                    numericInput("font_size", "Select text size", 18, min = 1, max = 50, step = 1),
-                    
+                    # 
+                    # # Text size
+                    # numericInput("font_size", "Select text size", 18, min = 1, max = 50, step = 1),
+                    # 
                     # Border style
                     selectInput("border_style", "Select border style", style_choices, "solid"),
                    
@@ -49,22 +49,24 @@ server <- function(input, output) {
   # input$update (the action button), so that the output is only
   # updated when the user clicks the button
   datasetInput <- eventReactive(input$run, {
-    switch("popluation_size" = popluation_size,
-           "f_m_ratio" = f_m_ratio)
+    switch(input$dataset,
+           "popluation_size" = popluation_size,
+           "f_m_ratio" = f_m_ratio,
+           )
   }, ignoreNULL = FALSE)
   
-  # output$button <- renderUI({
-  #   style <- paste0(collapse = " ",
-  #                   glue("background-color:{input$background};
-  #                 color:{input$color};
-  #                 border-color:{input$border_color};
-  #                 border-style:{input$border_style};
-  #                 border-width:{input$border_width}px;
-  #                 border-radius:{input$border_radius}%;
-  #                 font-size:{input$font_size}px;")
-  #   )
-  #   actionButton("button", input$label, style = style)
-  # })
+  output$button <- renderUI({
+    style <- paste0(collapse = " ",
+                    glue("background-color:{input$background};
+                  color:{input$color};
+                  border-color:{input$border_color};
+                  border-style:{input$border_style};
+                  border-width:{input$border_width}px;
+                  border-radius:{input$border_radius}%;
+                  font-size:{input$font_size}px;")
+    )
+    actionButton("button", input$label, style = style)
+  })
   
   output$text <- renderText({
     start <- glue('actionButton("button", "{input$label}",')
