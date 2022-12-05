@@ -1,4 +1,4 @@
-sim <- function(pop){
+simulation <- function(pop){
   adm_rate <- pop*.0002
   admits <- c()
   daily_total <- c()
