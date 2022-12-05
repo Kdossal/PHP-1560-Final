@@ -1,6 +1,5 @@
 library(shiny)
 library(glue)
-# library(colorpicker)
 
 style_choices <- c("none", "dotted", "dashed", "solid", "double")
 
@@ -14,17 +13,8 @@ ui <- fluidPage(theme = "theme.css",
                     # Label
                     textInput("label", "Select text form button", "Label"),
                     
-                    # Text color
-                    # colourInput("color", "Select text colour", "black"),
-                    
                     # Text size
                     numericInput("font_size", "Select text size", 18, min = 1, max = 50),
-                    
-                    # Background color
-                    # colourInput("background", "Select background colour", "white"),
-                    
-                    # Border color
-                    # colourInput("border_color", "Select border color", "gray"),
                     
                     # Border style
                     selectInput("border_style", "Select border style", style_choices, "solid"),
