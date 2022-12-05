@@ -14,16 +14,16 @@ ui <- fluidPage(theme = "theme.css",
                     textInput("label", "Select text form button", "Label"),
                     
                     # Text size
-                    numericInput("font_size", "Select text size", 18, min = 1, max = 50),
+                    numericInput("font_size", "Select text size", 18, min = 1, max = 50, step = 1),
                     
                     # Border style
                     selectInput("border_style", "Select border style", style_choices, "solid"),
+                   
+                    # Population size
+                    numericInput("population_size", "Input population size", 1000000, min = 20000, max = 5000000),
                     
-                    # Border size
-                    numericInput("border_width", "Select border width", 1, min = 1, max = 10),
-                    
-                    # Border radius
-                    sliderInput("border_radius", "Select border radius", 5, min = 0, max = 100)
+                    # Females to Males Ratio
+                    sliderInput("f_m_ratio", "Females to Males Ratio", 0.5, min = 0, max = 1)
                   ),
                   
                   mainPanel(
