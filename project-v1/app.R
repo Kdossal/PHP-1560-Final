@@ -23,7 +23,14 @@ ui <- fluidPage(theme = "theme.css",
                     numericInput("population_size", "Input population size", 1000000, min = 20000, max = 5000000),
                     
                     # Females to Males Ratio
-                    sliderInput("f_m_ratio", "Females to Males Ratio", 0.5, min = 0, max = 1)
+                    sliderInput("f_m_ratio", "Females to Males Ratio", 0.5, min = 0, max = 1),
+                    
+                    # Input: actionButton() to defer the rendering of output ----
+                    # until the user explicitly clicks the button (rather than
+                    # doing it immediately when inputs change). This is useful if
+                    # the computations required to render output are inordinately
+                    # time-consuming.
+                    actionButton("run", "Run Simulation")
                   ),
                   
                   mainPanel(
@@ -37,18 +44,27 @@ ui <- fluidPage(theme = "theme.css",
 
 server <- function(input, output) {
   
-  output$button <- renderUI({
-    style <- paste0(collapse = " ",
-                    glue("background-color:{input$background};
-                  color:{input$color};
-                  border-color:{input$border_color};
-                  border-style:{input$border_style};
-                  border-width:{input$border_width}px;
-                  border-radius:{input$border_radius}%;
-                  font-size:{input$font_size}px;")
-    )
-    actionButton("button", input$label, style = style)
-  })
+  # Return the requested dataset ----
+  # Note that we use eventReactive() here, which depends on
+  # input$update (the action button), so that the output is only
+  # updated when the user clicks the button
+  datasetInput <- eventReactive(input$run, {
+    switch("popluation_size" = popluation_size,
+           "f_m_ratio" = f_m_ratio)
+  }, ignoreNULL = FALSE)
+  
+  # output$button <- renderUI({
+  #   style <- paste0(collapse = " ",
+  #                   glue("background-color:{input$background};
+  #                 color:{input$color};
+  #                 border-color:{input$border_color};
+  #                 border-style:{input$border_style};
+  #                 border-width:{input$border_width}px;
+  #                 border-radius:{input$border_radius}%;
+  #                 font-size:{input$font_size}px;")
+  #   )
+  #   actionButton("button", input$label, style = style)
+  # })
   
   output$text <- renderText({
     start <- glue('actionButton("button", "{input$label}",')
