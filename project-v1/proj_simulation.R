@@ -1,12 +1,3 @@
----
-title: "Project"
-author: "Kameel Dossal"
-date: '2022-12-05'
-output: html_document
----
-
-```{r}
-
 sim <- function(pop){
   adm_rate <- pop*.0002
   admits <- c()
@@ -18,14 +9,5 @@ sim <- function(pop){
     daily_total <- append(daily_total, sum(admits > 0))
     admits <- admits - 1
   }
-  return(c(daily_total))
+  return(daily_total)
 }
-
-
-```
-
-```{r}
-
-plot(seq(1:100),sim(1000000))
-
-```
