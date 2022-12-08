@@ -18,10 +18,10 @@ ui <- fluidPage(
     sidebarPanel(
       
       # Slider
-      sliderInput("population", "Population:", min = 25000, max = 5000000, value = 25000, step = 25000), 
+      sliderInput("population", "Population:", min = 25000, max = 1000000, value = 25000, step = 25000), 
       
       # Females to Males Ratio
-      sliderInput("f_m_ratio", "Female:Male Ratio", 0.5, min = 0, max = 1),
+      sliderInput("f_m", "Female : Male Ratio", 0.5, min = 0, max = 1),
       
       # Season
       selectInput("season", "Select season", seasons, "Summer"),
@@ -47,13 +47,11 @@ server <- function(input, output) {
   observeEvent(input$button, {
     output$plot1 <- renderPlot({
       
-      # Run the simulation with the specified population
-      result <- data.frame(x = seq(1:100))
-      
-      # Plot the result using ggplot2
-      ggplot(result, aes(x = x)) +
-        replicate(10, geom_line(aes(y = simulation(pop = input$population)),
-                                color = "lightblue", size = 1)) +
+      # Plot Simulation
+      ggplot() +
+        replicate(5, 
+                  geom_line(aes(x = seq(1:100), y = simulation(pop = input$population, sex = input$f_m)[1:100]),
+                                color = sample(c("lightblue", 'grey', 'orchid'), 1), size = 1)) +
         labs(title = "Simulated Number of Beds Needed Over Time", x= "Days", y = "Number of Beds Needed") +
         theme_minimal() +
         theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
@@ -61,12 +59,26 @@ server <- function(input, output) {
               axis.title.y = element_text(size=12,face="bold", vjust=7), plot.margin = margin(20, 15, 20, 25), 
               legend.title = element_text(face='bold')) 
     })
+    
+    sim_data <- simulation(pop = input$population, sex = input$f_m)
+    
+    # First 100 points from sim_data 
+    daily_new <- sim_data[101:200]
+    
+    # First 200 points are Daily Numbers
+    LoS_data <- sim_data[201:length(sim_data)]
+    
     output$plot2 <- renderPlot({
-      LoS_dist <- rpois(input$population, lambda = 4.6)
-      hist(LoS_dist, 
-           main = "Patients' Length of Stay",
-           ylab='# Patients',
-           xlab ='Days')
+      
+      # Plots Distribution of Length of Stays
+      ggplot() +
+        geom_histogram(aes(x = LoS_data), binwidth = 1, color = 'blue', fill = 'lightblue') +
+        labs(title = "Patients' Length of Stay", x= "Days", y = "Number of Patients") +
+        theme_minimal() +
+        theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
+              axis.title.x = element_text(size=12,face="bold", vjust=-3),
+              axis.title.y = element_text(size=12,face="bold", vjust=7), plot.margin = margin(20, 15, 20, 25), 
+              legend.title = element_text(face='bold'))
     })
   })
 }
