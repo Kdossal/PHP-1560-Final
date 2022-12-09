@@ -23,6 +23,9 @@ ui <- fluidPage(
       # Females to Males Ratio
       sliderInput("f_m", "Female : Male Ratio", 0.5, min = 0, max = 1),
       
+      # Beds
+      sliderInput("n_beds", "Number of Beds", 500, min = 100, max = 2000),
+      
       # Season
       selectInput("season", "Select season", seasons, "Summer"),
       
@@ -47,11 +50,14 @@ server <- function(input, output) {
   observeEvent(input$button, {
     output$plot1 <- renderPlot({
       
+      data <- simulation(pop = input$population, sex = input$f_m, input$n_beds, output = 'Daily Totals')
+      
       # Plot Simulation
-      ggplot() +
-        replicate(5, 
-                  geom_line(aes(x = seq(1:100), y = simulation(pop = input$population, sex = input$f_m, output = 'Daily Total')),
-                                color = sample(c("lightblue", 'grey', 'orchid'), 1), size = 1)) +
+      ggplot(data = data) + geom_line(aes(x = days, y = daily_total)) + geom_line(aes(x = days, y = queue)) +
+        geom_line(aes(x = seq(1:100), y = input$n_beds)) +
+        #replicate(5, 
+        #          geom_line(aes(x = seq(1:100), y = simulation(pop = input$population, sex = input$f_m, output = 'Daily Total')),
+        #                        color = sample(c("lightblue", 'grey', 'orchid'), 1), size = 1)) +
         labs(title = "Simulated Number of Beds Needed Over Time", x= "Days", y = "Number of Beds Needed") +
         theme_minimal() +
         theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
@@ -60,7 +66,7 @@ server <- function(input, output) {
               legend.title = element_text(face='bold')) 
     })
     
-    LoS_data <- simulation(pop = input$population, sex = input$f_m, output = 'LoS')
+    LoS_data <- simulation(pop = input$population, sex = input$f_m, input$n_beds, output = 'LoS')
     
     output$plot2 <- renderPlot({
       

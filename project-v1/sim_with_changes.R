@@ -9,7 +9,7 @@ simulation <- function(pop, sex, beds, output){
   # Average Number of New Female Admits is .024% of the Female Population
   f_adm_rate <- fem_pop*.00032
   
-  # Tracks daily Number of New Admits
+  # Tracks daily Number of New Admits 
   new_daily_adm <- c()
   
   # Used to track patients and their changing length of stays
@@ -21,11 +21,15 @@ simulation <- function(pop, sex, beds, output){
   # Daily Total Number of Patients in Hospital
   daily_total <- c()
   
-  # Daily Total Number of Patients Waiting
+  # Patients Waiting in Line
   queue <- c()
   
-  # Daily New Admits
-  new_adm <- c()
+  # Daily Length of Queue 
+  q_len <- c()
+  
+  # Used to track wait times
+  wait_times <- c()
+  n_queue_adm <- 1
   
   for(i in 1:100){
     # Generates random number of new admits (n) given an adm_rate for M/F
@@ -36,11 +40,23 @@ simulation <- function(pop, sex, beds, output){
     m_los <- rpois(m_new_admits, 5) 
     f_los <-  rpois(f_new_admits, 4.3)
     
-    new_adm <- append(new_adm, c(m_los, f_los))
+    new_adm <- c(m_los, f_los)
     
+    while (sum(all_admits > 0) <= beds & length(queue) > 0){
+      new_daily_adm = new_daily_adm + 1
+      
+      # Tracks and Updates all Patients Data
+      all_admits <- append(all_admits, new_adm[1])
+      
+      # Tracks all patient's LoS
+      LoS <- append(LoS, new_adm[1])
+      
+      queue <- queue[-1]
+      n_queue_adm = n_queue_adm + 1
+    }
     
     while (sum(all_admits > 0) <= beds & length(new_adm) > 0){
-      
+      # Updates Daily Number of New Admits
       new_daily_adm = new_daily_adm + 1
       
       # Tracks and Updates all Patients Data
@@ -53,14 +69,24 @@ simulation <- function(pop, sex, beds, output){
     }
     
     # Add People that did not admitted to the Queue
-    if (length(new_adm) > 0){queue <- append(queue, length(new_adm))}
-    else {queue <- append(queue, 0)}
+    if (length(new_adm) > 0){
+      queue <- append(queue, new_adm)
+      wait_times <- append(wait_times, rep(0, length(new_adm)))
+    }
+    
+    # Updates q_len with number of people currently in queue
+    q_len <- append(q_len, length(queue))
     
     # Checks how many people in hospital with days remaining
     daily_total <- append(daily_total, sum(all_admits > 0))
     
     # Simulates Next Day 
     all_admits <- all_admits - 1
+    
+    # Adds one day to everyone still waiting in queue
+    wait_times <- replace(wait_times, 
+                          n_queue_adm:length(wait_times), 
+                          a[n_queue_adm:length(wait_times)]+1)
   }
   
   if (output == 'Daily Totals'){
@@ -68,9 +94,9 @@ simulation <- function(pop, sex, beds, output){
       data.frame(
         days = seq(1:100),
         daily_total,
-        queue
+        q_len
       )
     )}
-  
   else if (output == 'LoS'){return(LoS)}
+  else if (output == 'Wait Times'){return(wait_times)}
 }
