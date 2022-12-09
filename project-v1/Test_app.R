@@ -50,7 +50,7 @@ server <- function(input, output) {
       # Plot Simulation
       ggplot() +
         replicate(5, 
-                  geom_line(aes(x = seq(1:100), y = simulation(pop = input$population, sex = input$f_m)[1:100]),
+                  geom_line(aes(x = seq(1:100), y = simulation(pop = input$population, sex = input$f_m, output = 'Daily Total')),
                                 color = sample(c("lightblue", 'grey', 'orchid'), 1), size = 1)) +
         labs(title = "Simulated Number of Beds Needed Over Time", x= "Days", y = "Number of Beds Needed") +
         theme_minimal() +
@@ -60,13 +60,7 @@ server <- function(input, output) {
               legend.title = element_text(face='bold')) 
     })
     
-    sim_data <- simulation(pop = input$population, sex = input$f_m)
-    
-    # First 100 points from sim_data 
-    daily_new <- sim_data[101:200]
-    
-    # First 200 points are Daily Numbers
-    LoS_data <- sim_data[201:length(sim_data)]
+    LoS_data <- simulation(pop = input$population, sex = input$f_m, output = 'LoS')
     
     output$plot2 <- renderPlot({
       

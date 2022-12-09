@@ -1,4 +1,4 @@
-simulation <- function(pop, sex){
+simulation <- function(pop, sex, output){
   
   # Separating Populations into sex groups
   fem_pop <- sex*pop
@@ -49,5 +49,6 @@ simulation <- function(pop, sex){
   # 1:100 are Daily Total Number People in the Hospital
   # 101:200 are Daily Number of New Patients
   # 201: are the LoS for every Patient
-  return(c(daily_total, new_daily_adm, LoS))
+  if (output == 'Daily Total'){return(daily_total)}
+  else if (output == 'LoS'){return(LoS)}
 }
