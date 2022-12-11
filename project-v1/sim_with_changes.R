@@ -42,23 +42,18 @@ simulation <- function(pop, sex, beds, output){
     
     new_adm <- c(m_los, f_los)
     
-    while (sum(all_admits > 0) <= beds & length(queue) > 0){
-      new_daily_adm = new_daily_adm + 1
-      
+    while (sum(all_admits > 0) < beds & length(queue) > 0){
       # Tracks and Updates all Patients Data
-      all_admits <- append(all_admits, new_adm[1])
+      all_admits <- append(all_admits, queue[1])
       
       # Tracks all patient's LoS
-      LoS <- append(LoS, new_adm[1])
+      LoS <- append(LoS, queue[1])
       
       queue <- queue[-1]
       n_queue_adm = n_queue_adm + 1
     }
     
-    while (sum(all_admits > 0) <= beds & length(new_adm) > 0){
-      # Updates Daily Number of New Admits
-      new_daily_adm = new_daily_adm + 1
-      
+    while (sum(all_admits > 0) < beds & length(new_adm) > 0){
       # Tracks and Updates all Patients Data
       all_admits <- append(all_admits, new_adm[1])
       
@@ -86,7 +81,7 @@ simulation <- function(pop, sex, beds, output){
     # Adds one day to everyone still waiting in queue
     wait_times <- replace(wait_times, 
                           n_queue_adm:length(wait_times), 
-                          a[n_queue_adm:length(wait_times)]+1)
+                          wait_times[n_queue_adm:length(wait_times)]+1)
   }
   
   if (output == 'Daily Totals'){
@@ -98,5 +93,6 @@ simulation <- function(pop, sex, beds, output){
       )
     )}
   else if (output == 'LoS'){return(LoS)}
-  else if (output == 'Wait Times'){return(wait_times)}
+  else if (output == 'Wait Times'){if (length(wait_times > 0)){return(wait_times)}
+                                   else {c(0)}}
 }
