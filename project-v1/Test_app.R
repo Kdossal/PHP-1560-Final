@@ -30,7 +30,8 @@ ui <- fluidPage(
       selectInput("inc", "Select Community-Level Income", inc_level, "Quartile 1 (lowest income)"),
       
       # Button
-      actionButton("button", "Refresh plot")
+      actionButton("button", "Refresh plot"),
+      
     ),
     
     # Main panel
