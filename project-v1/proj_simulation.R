@@ -42,7 +42,7 @@ simulation <- function(pop, sex, beds, inc, output){
   
   # Used to track wait times
   wait_times <- c()
-  n_queue_adm <- 1
+  n_queue_adm <- 0
   
   # Daily Loss of Not having every bed full or people waiting
   daily_loss <- c()
@@ -101,9 +101,7 @@ simulation <- function(pop, sex, beds, inc, output){
     all_admits <- all_admits - 1
     
     # Adds one day to everyone still waiting in queue
-    wait_times <- replace(wait_times, 
-                          n_queue_adm:length(wait_times), 
-                          wait_times[n_queue_adm:length(wait_times)]+1)
+    wait_times <- ifelse(seq_along(wait_times) > n_queue_adm, wait_times + 1, wait_times)
     
     # Average daily cost of a patient is $11,700 each day
     daily_loss <- append(daily_loss, (beds - curr_adm)*11.7 + length(queue)*11.7)

@@ -1,5 +1,6 @@
 # Load the Shiny library
 library(shiny)
+library(scales)
 source(file = 'proj_simulation.R', local = TRUE)
 
 # Load theme library for aesthetics
@@ -32,7 +33,7 @@ ui <- fluidPage(
   
   # Sidebar
   fluidRow(
-    column(4, 
+    column(2, 
        wellPanel(
         
           h4("Input Parameters"),    
@@ -46,7 +47,7 @@ ui <- fluidPage(
           # Beds
           sliderInput("n_beds", "Number of Beds", 500, min = 100, max = 2000, step = 25),
           
-          # Season
+          # Income Level
           selectInput("inc", "Select Community-Level Income", inc_level, "Quartile 1 (lowest income)"),
           
           # Button
@@ -60,12 +61,12 @@ ui <- fluidPage(
           p(h5("Beds Needed:"), verbatimTextOutput("avg_beds",placeholder=T)),
           p(h5("Length of Stay (days):"), verbatimTextOutput("avg_LoS",placeholder=T)),
           p(h5("Wait Time (days):"), verbatimTextOutput("avg_wait_time",placeholder=T)),
-          p(h5("Hospital Losses ($ in Thousands): "), helpText("Due to Being Under/Over Capacity"), verbatimTextOutput("avg_loss",placeholder=T))
+          p(h5("Hospital Losses ($ in Millions): "), helpText("Due to Being Under/Over Capacity"), verbatimTextOutput("avg_loss",placeholder=T))
         ),
     ),
     
     # Main panel showing plots
-    column(8,
+    column(5,
            # Use if we want borders below plots
            # fluidRow(id = "plot_borders",
            #          plotOutput("plot1")
@@ -81,8 +82,10 @@ ui <- fluidPage(
            # ),
       plotOutput("plot1"),
       plotOutput("plot2"),
-      plotOutput('plot4'),
-      plotOutput('plot3')
+    ),
+    column(5,
+       plotOutput('plot3'),
+       plotOutput('plot4')
     )
   )
 )
@@ -102,34 +105,23 @@ server <- function(input, output) {
     wait_data <- simulation(pop = input$population, sex = input$f_m, input$n_beds, input$inc, output = 'Wait Times')
     
     # Average Calculated Values for Display
-    output$avg_beds <- renderText(as.character({mean(data$daily_total)}))
-    output$avg_LoS <- renderText({mean(LoS_data)})
-    output$avg_loss <- renderText({mean(data$daily_loss)})
-    output$avg_wait_time <- renderText({mean(wait_data)})
+    output$avg_beds <- renderText(as.character({round(mean(data$daily_total),2)}))
+    output$avg_LoS <- renderText({round(mean(LoS_data), 2)})
+    output$avg_loss <- renderText({round(mean(data$daily_loss),-1)/1000})
+    output$avg_wait_time <- renderText({round(mean(wait_data),2)})
     
-    # Updates Number of Beds
-    beds = input$n_beds
+    beds <- input$n_beds
     
     output$plot1 <- renderPlot({
+      
       # Plot Simulation
-      
-      # colors <- c("Beds_Utilized" = "#00AFBB", "Wait_Times" = "#C4961A", "Available_Beds" = "red")
-      
       ggplot(data = data, aes(x = days)) + 
-        geom_line(aes(y = daily_total),color='#00AFBB') +
-        geom_line(aes(y = q_len),color='#C4961A') +
-        geom_line(aes(y = beds),color="red") +
-        
-        # Trying toi add a legend here
-        # geom_line(aes(y = daily_total),color='Beds_Utilized') + 
-        # geom_line(aes(y = q_len),color='Wait_Times') +
-        # geom_line(aes(y = beds),color="Available_Beds") +
-        # geom_label(aes(label = list(c("Beds_Utilized","Wait_Times","Available_Beds"))), nudge_x = 0.35, size = 4) +
-        # scale_color_manual(name = "Legend", 
-        #   breaks=c('Beds_Utilized', 'Wait_Times', 'Available_Beds'),
-        #   values = c("Beds_Utilized" = "#00AFBB", "Wait_Times" = "#C4961A", "Available_Beds" = "red")) +
-        
-        labs(title = "Simulated Number of Beds Used Over Time", x= "Days", y = "Number of Beds Needed")  + 
+        geom_line(aes(y = q_len, color='line1'), size=1) +
+        geom_line(aes(y = beds, color="line2"), size=1) +
+        geom_line(aes(y = daily_total, color='line3'), size=1) +
+        scale_color_manual(values = c("line3" = "#00AFBB", "line1" = "red", 'line2' = 'black'),
+                           labels = c('line3'="Current Patients", 'line1'="Waiting", 'line2'='# of Beds')) +
+        labs(title = "Simulated Number of Beds Used Over Time", x = "Days", y = "# of Individuals", color = '')  + 
         theme_minimal() +
         theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
               axis.title.x = element_text(size=12,face="bold", vjust=-3),
@@ -156,13 +148,17 @@ server <- function(input, output) {
     output$plot3 <- renderPlot({
       
       # Plots Distribution of Wait Times
-      ggplot(data = data) + geom_line(aes(x = days, y = daily_loss),color="#00AFBB") +
-        labs(title = "Hospital Daily Losses", x= "Days", y = "$ in Thousands") +
+      ggplot(data = data) + geom_line(aes(x = days, y = daily_loss,color="line1"), size=1) +
+        labs(title = "Hospital Daily Losses", x= "Days", y = "Daily Losses", color='') +
+        scale_color_manual(values = c("line1" = "red"),
+                           labels = c('line1'="Daily Loss from Being Under/Over Capacity")) +
+        scale_y_continuous(labels = label_number(scale = 1e-3, prefix = "$", suffix = "M", accuracy = 1)) +
         theme_minimal() +
         theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
               axis.title.x = element_text(size=12,face="bold", vjust=-3),
               axis.title.y = element_text(size=12,face="bold", vjust=7), plot.margin = margin(20, 15, 20, 25), 
-              legend.title = element_text(face='bold'))
+              legend.title = element_text(face='bold'),
+              legend.position = "bottom")
     })
     
     output$plot4 <- renderPlot({
