@@ -2,7 +2,8 @@ simulation <- function(pop, sex, beds, inc, output){
   #@param: pop, an integer from 25000-1000000 representing the population size
   #@param: sex, an float representing the ratio of female to male in population
   #@param: beds, an integer from 0-2000 representing the number of beds
-  #@param: quartile, an string representing the population income quartile (1=lowest, 4=highest)
+  #@param: inc, an string representing the population income quartile (1=lowest, 4=highest)
+  #@param: output, an string representing the either length of stay or wait time
   #@returns: ---
   # Updates admission rates and LoS rates based on income range 
   # of the community around a hospital

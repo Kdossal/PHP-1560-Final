@@ -1,5 +1,10 @@
 simulation <- function(pop, sex, beds, output){
-  
+  #@param: pop, an integer from 25000-1000000 representing the population size
+  #@param: sex, an float representing the ratio of female to male in population
+  #@param: beds, an integer from 0-2000 representing the number of beds
+  #@param: inc, an string representing the population income quartile (1=lowest, 4=highest)
+  #@param: output, an string representing the either length of stay or wait time
+  #@returns: ---
   # Separating Populations into sex groups
   fem_pop <- sex*pop
   male_pop <- (1 - sex)*pop
