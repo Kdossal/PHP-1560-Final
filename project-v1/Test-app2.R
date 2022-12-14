@@ -34,6 +34,7 @@ ui <- fluidPage(
   # Sidebar
   fluidRow(
     column(2, 
+           
        wellPanel(
         
           h4("Input Parameters"),    
@@ -75,16 +76,8 @@ ui <- fluidPage(
        plotOutput('plot4')
     ),
     
-    #Create backround and cite appropriate references
-    h3( "The goal of this app is to simulate the hospital bed usage over the course of 100 days. Some of the relevant
-              factors include population size, sex ratio, bed availability, and income (1). Numbers were pulled from poisson distributions that 
-              were supported by current literature in Health Care Utilization Project data reports (2). Inspiration for this project
-        comes from 'discrete simulation' models that are common in Health Care resource allocation (3)(4). This project simplifies the complexity
-        of the simulation by only accounting for beds as the resource."),
-    h5("(1) https://www.cdc.gov/nchs/data/hus/2020-2021/BedComSt.pdf"),
-    h5("(2) https://www.hcup-us.ahrq.gov/reports/statbriefs/sb246-Geographic-Variation-Hospital-Stays.pdf"),
-    h5("(3) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625660/"),
-    h5("(4)https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacit")
+    #Create pop-up that cites appropriate references and sources
+    actionButton("proj_desc", "Project Information")
     
   )
 )
@@ -174,6 +167,21 @@ server <- function(input, output) {
     })
   })
   
+  # pop-up text 
+  plotPopup <- observeEvent(input$proj_desc, {
+    showModal(modalDialog(title = "Project Description", 
+                          HTML("<p> The goal of this app is to simulate the hospital bed usage over the course of 100 days. Some of the relevant
+                               factors include population size, sex ratio, bed availability, and income (1). Numbers were pulled from poisson distributions that 
+                               were supported by current literature in Health Care Utilization Project data reports (2). Inspiration for this project
+                               comes from 'discrete simulation' models that are common in Health Care resource allocation (3)(4). This project simplifies the complexity
+                               of the simulation by only accounting for beds as the resource.</p>
+                                 <ol>
+                                  <li>https://www.cdc.gov/nchs/data/hus/2020-2021/BedComSt.pdf</li>
+                                  <li>https://www.hcup-us.ahrq.gov/reports/statbriefs/sb246-Geographic-Variation-Hospital-Stays.pdf</li>
+                                  <li>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625660/</li>
+                                  <li>https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacity</li>
+                                </ol>"))) 
+  })
 }
 
 # Run the app
