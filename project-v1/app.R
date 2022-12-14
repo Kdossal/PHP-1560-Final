@@ -39,6 +39,7 @@ ui <- fluidPage(theme = "theme.css",
                     h2("Code"),
                     verbatimTextOutput("text")
                   )
+                  
                 )
 )
 
@@ -66,6 +67,9 @@ server <- function(input, output) {
                   font-size:{input$font_size}px;")
     )
     actionButton("button", input$label, style = style)
+  })
+  output$tooltip <- renderUI({
+    shiny::tooltipText("Simulated data drew from a poisson distribution based off HCUP statistics" )
   })
   
   output$text <- renderText({

@@ -67,19 +67,6 @@ ui <- fluidPage(
     
     # Main panel showing plots
     column(5,
-           # Use if we want borders below plots
-           # fluidRow(id = "plot_borders",
-           #          plotOutput("plot1")
-           #          ),
-           # fluidRow(id = "plot_borders",
-           #          plotOutput("plot2")
-           # ),
-           # fluidRow(id = "plot_borders",
-           #          plotOutput("plot4")
-           # ),
-           # fluidRow(id = "plot_borders",
-           #          plotOutput("plot3")
-           # ),
       plotOutput("plot1"),
       plotOutput("plot2"),
     ),
@@ -87,6 +74,8 @@ ui <- fluidPage(
        plotOutput('plot3'),
        plotOutput('plot4')
     ),
+    
+    #Create backround and cite appropriate references
     h3( "The goal of this app is to simulate the hospital bed usage over the course of 100 days. Some of the relevant
               factors include population size, sex ratio, bed availability, and income (1). Numbers were pulled from poisson distributions that 
               were supported by current literature in Health Care Utilization Project data reports (2). Inspiration for this project
@@ -95,7 +84,7 @@ ui <- fluidPage(
     h5("(1) https://www.cdc.gov/nchs/data/hus/2020-2021/BedComSt.pdf"),
     h5("(2) https://www.hcup-us.ahrq.gov/reports/statbriefs/sb246-Geographic-Variation-Hospital-Stays.pdf"),
     h5("(3) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625660/"),
-    h5("https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacit")
+    h5("(4)https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacit")
     
   )
 )
