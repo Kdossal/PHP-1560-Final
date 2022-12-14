@@ -58,7 +58,7 @@ ui <- fluidPage(
         wellPanel( 
           # Display Calculated Values
           h4("Calculated Averages"),
-          p(h5("Beds Needed:"), verbatimTextOutput("avg_beds",placeholder=T)),
+          p(h5("Beds In Use:"), verbatimTextOutput("avg_beds",placeholder=T)),
           p(h5("Length of Stay (days):"), verbatimTextOutput("avg_LoS",placeholder=T)),
           p(h5("Wait Time (days):"), verbatimTextOutput("avg_wait_time",placeholder=T)),
           p(h5("Hospital Losses ($ in Millions): "), helpText("Due to Being Under/Over Capacity"), verbatimTextOutput("avg_loss",placeholder=T))
