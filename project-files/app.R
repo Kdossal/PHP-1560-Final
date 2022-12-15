@@ -31,10 +31,15 @@ ui <- fluidPage(
       "))
   ),
   
+  
   # Sidebar
   fluidRow(
     column(2, 
            
+        #Create pop-up that cites appropriate references and sources
+        actionButton("proj_desc", "Project Description", 
+                     style = "margin-bottom:10px"),
+      
        wellPanel(
         
           h4("Input Parameters"),    
@@ -45,7 +50,7 @@ ui <- fluidPage(
           # Females to Males Ratio
           sliderInput("f_m", "Female : Male Ratio", 0.5, min = 0, max = 1),
           
-          # Beds
+          # Available Beds
           sliderInput("n_beds", "Number of Beds", 500, min = 100, max = 2000, step = 25),
           
           # Income Level
@@ -62,7 +67,7 @@ ui <- fluidPage(
           p(h5("Beds In Use:"), verbatimTextOutput("avg_beds",placeholder=T)),
           p(h5("Length of Stay (days):"), verbatimTextOutput("avg_LoS",placeholder=T)),
           p(h5("Wait Time (days):"), verbatimTextOutput("avg_wait_time",placeholder=T)),
-          p(h5("Hospital Losses ($ in Millions): "), helpText("Due to Being Under/Over Capacity"), verbatimTextOutput("avg_loss",placeholder=T))
+          p(h5("Hospital Daily Loss ($ in Millions): "), helpText("Due to Being Under/Over Capacity"), verbatimTextOutput("avg_loss",placeholder=T))
         ),
     ),
     
@@ -74,11 +79,7 @@ ui <- fluidPage(
     column(5,
        plotOutput('plot3'),
        plotOutput('plot4')
-    ),
-    
-    #Create pop-up that cites appropriate references and sources
-    actionButton("proj_desc", "Project Information")
-    
+    )
   )
 )
 
@@ -108,12 +109,12 @@ server <- function(input, output) {
       
       # Plot Simulation
       ggplot(data = data, aes(x = days)) + 
+        geom_line(aes(y = daily_total, color='line3'), size=1) +
         geom_line(aes(y = q_len, color='line1'), size=1) +
         geom_line(aes(y = beds, color="line2"), size=1) +
-        geom_line(aes(y = daily_total, color='line3'), size=1) +
         scale_color_manual(values = c("line3" = "#00AFBB", "line1" = "red", 'line2' = 'black'),
-                           labels = c('line3'="Current Patients", 'line1'="Waiting", 'line2'='# of Beds')) +
-        labs(title = "Simulated Number of Beds Used Over Time", x = "Days", y = "# of Individuals", color = '')  + 
+                           labels = c('line3'="Patients Occupying Beds", 'line1'="Patients Waiting", 'line2'='Number of Available Beds')) +
+        labs(title = "Hospital Daily Occupancy", x = "Day", y = "Number of Patients", color = '')  + 
         theme_minimal() +
         theme(plot.title = element_text(size=16, face="bold", vjust=4, hjust=.5, lineheight=0.6), 
               axis.title.x = element_text(size=12,face="bold", vjust=-3),
@@ -121,7 +122,6 @@ server <- function(input, output) {
               plot.margin = margin(20, 15, 20, 25), 
               legend.position="bottom",
               legend.title = element_text(face='bold'))
-      
     })
     
     output$plot2 <- renderPlot({
@@ -141,7 +141,7 @@ server <- function(input, output) {
       
       # Plots Distribution of Wait Times
       ggplot(data = data) + geom_line(aes(x = days, y = daily_loss,color="line1"), size=1) +
-        labs(title = "Hospital Daily Losses", x= "Days", y = "Daily Losses", color='') +
+        labs(title = "Hospital Daily Financial Losses", x= "Day", y = "Loss ($ in Millions)", color='') +
         scale_color_manual(values = c("line1" = "red"),
                            labels = c('line1'="Daily Loss from Being Under/Over Capacity")) +
         scale_y_continuous(labels = label_number(scale = 1e-3, prefix = "$", suffix = "M", accuracy = 1)) +
