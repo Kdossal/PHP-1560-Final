@@ -1,4 +1,4 @@
-# PHP-1560-Final
+# PHP 1560/2560 Final Project README
 
 # Overview: 
 Our project aims to simulate hospital bed occupancy for a given population over the course of 100 days. Our model takes in parameters including population size, female to male ratio, number of beds available (1), and community-level income. These values are used in 'proj_simulation.R' to calculate the daily hospital admission rate and patients' length of stay based on demographic-specific means drawn from data reported in the Health Care Utilization Project (2). Taking the average values for admission rate and length of stay, we generate several Poisson distributions to simulate hospital bed occupancy, as well as calculate corresponding patient wait times and hospital losses to illustrate scenarios when the hospital is under or over capacity. 
