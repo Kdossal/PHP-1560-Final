@@ -1,6 +1,6 @@
 # PHP 1560/2560 Final Project README
 
-# Link to ShinyApp: 
+## Link to ShinyApp: 
 https://xpp2zj-jenny-wei.shinyapps.io/project-files/
 
 
