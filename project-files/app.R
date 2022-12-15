@@ -180,7 +180,7 @@ server <- function(input, output) {
                                   <li>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625660/</li>
                                   <li>https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacity</li>
                                 </ol>
-                               <p>Note: please make sure to view this app on a full-size window for the best results</p>"))) 
+                               <p>Note: Please make sure to view this app on a full-size window for the best results.</p>"))) 
   })
 }
 
