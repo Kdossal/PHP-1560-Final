@@ -31,15 +31,14 @@ ui <- fluidPage(
       "))
   ),
   
-  
   # Sidebar
   fluidRow(
     column(2, 
-           
-        #Create pop-up that cites appropriate references and sources
+        # Create pop-up that cites appropriate references and sources
         actionButton("proj_desc", "Project Description", 
                      style = "margin-bottom:10px"),
       
+        # Create section for user input parameters
        wellPanel(
         
           h4("Input Parameters"),    
@@ -61,8 +60,8 @@ ui <- fluidPage(
           
           ),
   
+       # Create section for displaying calculated parameters
         wellPanel( 
-          # Display Calculated Values
           h4("Calculated Averages"),
           p(h5("Beds In Use:"), verbatimTextOutput("avg_beds",placeholder=T)),
           p(h5("Length of Stay (days):"), verbatimTextOutput("avg_LoS",placeholder=T)),
@@ -180,7 +179,8 @@ server <- function(input, output) {
                                   <li>https://www.hcup-us.ahrq.gov/reports/statbriefs/sb246-Geographic-Variation-Hospital-Stays.pdf</li>
                                   <li>https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8625660/</li>
                                   <li>https://www.codeproject.com/Articles/1111093/Discrete-Event-Simulation-using-R-Hospital-Capacity</li>
-                                </ol>"))) 
+                                </ol>
+                               <p>Note: please make sure to view this app on a full-size window for the best results</p>"))) 
   })
 }
 
